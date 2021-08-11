@@ -16,6 +16,10 @@ class ServerAbstract
 
     protected array $graph;
 
+    protected ?string $id = null;
+
+    protected ?array $superClassOf = null;
+
     /**
      * @param string|null $apiUrl
      */
@@ -42,5 +46,21 @@ class ServerAbstract
     public function setGraph(array $graph): void
     {
         $this->graph = $graph;
+    }
+
+    /**
+     * @param array $subClassOf
+     */
+    public function setSuperClassOf(array $subClassOf): void
+    {
+        $this->superClassOf[] = $subClassOf;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getId(): ?string
+    {
+        return $this->id;
     }
 }

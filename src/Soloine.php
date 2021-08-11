@@ -83,17 +83,24 @@ class Soloine
      */
     public function routes(SlimApp $route)
     {
-        $route->get('/soloine/[{type}]', function (Request $request, ResponseInterface $response, $args) {
-            $queryStrings = $request->getQueryParams();
-            $type = $args['type'] ?? $queryStrings['class'] ?? null;
+        $route->get('/soloine/[{type}]', function (Request $request, ResponseInterface $response, $args)
+        {
+            $params = $request->getQueryParams();
+            $type = $args['type'] ?? $params['class'] ?? null;
+            $output = $params['output'] ?? null;
+
             if ($type) {
-                $content = TypeFactory::created($type, $queryStrings);
+                $content = TypeFactory::created($type, $params);
             } else {
                 $content = file_get_contents(__DIR__.'/../composer.json');
             }
-            $response->withHeader('Content-Type', 'application/json');
-            $response->getBody()->write($content);
-            return $response;
+
+            $contentType = $output == 'html' ? "text/html" : "application/json";
+
+            $newResponse = $response->withHeader('Content-Type', $contentType);
+            $newResponse->getBody()->write($content);
+
+            return $newResponse;
         });
     }
 }

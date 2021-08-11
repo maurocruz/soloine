@@ -9,8 +9,11 @@ interface ServerInterface
      */
     public function selectThing(string $idname);
 
+
+    public function includeSubClass();
+
     /**
-     * @return array
+     * @return string
      */
-    public function ready(): array;
+    public function ready(): string;
 }
