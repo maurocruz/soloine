@@ -1,0 +1,22 @@
+{
+  "name": "vendor_name/soloine",
+  "description": "Sort local information",
+  "minimum-stability": "beta",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Mauro Cruz",
+      "email": "maurocruz@plinct.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "slim/slim": "4.*",
+    "slim/psr7": "1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Plinct\\Soloine\\": "src/"
+    }
+  }
+}
