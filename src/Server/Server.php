@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Plinct\Soloine\Server;
 
+use Plinct\Soloine\Format\Format;
+
 class Server extends ServerAbstract implements ServerInterface
 {
     /**
@@ -15,48 +17,43 @@ class Server extends ServerAbstract implements ServerInterface
     }
 
     /**
-     * @param string $idname
+     * @param string $id
      */
-    public function selectThing(string $idname)
+    public function selectThing(string $id)
     {
-        $id = "schema:$idname";
-        foreach ($this->graph as $value) {
-            if ($value['@id'] == $id) {
-                $this->id = $value['@id'];
-                $newGraph = $value;
-            }
-        }
-        $this->setGraph($newGraph ?? ['message'=>'No class found']);
+        $this->superClass = parent::selectClass($id);
     }
 
-    public function includeSubClass()
+    /**
+     * @param bool $includeSubClass
+     */
+    public function includeSubClass(bool $includeSubClass = true)
     {
-        $graph = $this->data['@graph'];
-        foreach ($graph as $value) {
-            $subClassOf = $value['rdfs:subClassOf'] ?? null;
-            if ($subClassOf) {
-                if (isset($subClassOf['@id']) && $subClassOf['@id'] == $this->id) {
-                    $this->setSuperClassOf(['@id'=>$value['@id']]);
-                } elseif(count($subClassOf) > 1) {
-                    foreach ($subClassOf as $item) {
-                        $itemId = $item['@id'] ?? null;
-                        if ($itemId && $itemId == $this->id) {
-                            $this->setSuperClassOf(['@id'=>$value['@id']]);
-                        }
-                    }
-                }
-            }
+        $this->includeSubClass = $includeSubClass;
+    }
+
+    /**
+     * @return bool
+     */
+    public function classExists(): bool
+    {
+        return (bool)$this->id;
+    }
+
+    public function format(string $format)
+    {
+        if ($format == "hierarchyText") {
+            $this->superClass = (new Format())->hierarchyText($this->superClass);
         }
-        $this->graph['superClassOf'] = $this->superClassOf;
     }
 
     /**
      * @return string
      */
-    public final function ready(): string
+    public final function render(): string
     {
         $this->data['@context'] = $this->context;
-        $this->data['@graph'] = $this->graph;
+        $this->data['@graph'] = $this->superClass;
 
         return json_encode($this->data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
