@@ -14,12 +14,21 @@ class TypeDefault implements TypeInterface
     public static function createType(string $class, array $params = null): string
     {
         $server = new Server();
-        $server->selectThing(ucfirst($class));
 
-        if (isset($params['subClass']) && $server->getId()) {
-           $server->includeSubClass();
+        // SUB CLASS
+        if (isset($params['subClass'])) {
+            $server->includeSubClass();
         }
 
-        return $server->ready();
+        // SELECT THING
+        $server->selectThing("schema:".ucfirst($class));
+
+        // FORMAT
+        if (isset($params['format'])) {
+            $server->format($params['format']);
+        }
+
+        // RENDER
+        return $server->render();
     }
 }
