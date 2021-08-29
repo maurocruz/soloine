@@ -4,26 +4,43 @@ declare(strict_types=1);
 
 namespace Plinct\Soloine\Format;
 
-class Format extends FormatAbstract
+use Plinct\Soloine\RdfsObject\RdfsObject;
+
+class Format
 {
+    protected RdfsObject $class;
+
     /**
-     * @param $class
+     * @param array $class
+     */
+    public function __construct(array $class)
+    {
+        $this->class = new RdfsObject($class);
+    }
+
+    /**
      * @return array
      */
-    public function hierarchyText($class): array
+    public function hierarchyText(): array
     {
-        $superClassOf = $class['superClassOf'] ?? null;
+        return $this->class->listSubClass();
+    }
 
-        $parent = $class['rdfs:label'];
+    /**
+     * @param $subClass
+     * @return array
+     */
+    public function breadcrumb($subClass): array
+    {
+        $subClass = ucfirst($subClass);
 
-        $this->list[$parent] = $parent;
+        $listSubClass = $this->class->listSubClass();
 
-        if ($superClassOf) {
-            foreach ($superClassOf as $item) {
-                parent::listSubClass($parent, $item);
-            }
+        if (array_key_exists($subClass, $listSubClass)) {
+            return [
+                "breadcrumb" => $listSubClass[$subClass]
+            ];
         }
-
-        return $this->list;
+        return [ 'breadcrumb' => $this->class->getLabel() ];
     }
 }

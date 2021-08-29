@@ -6,5 +6,10 @@ namespace Plinct\Soloine\Interfaces;
 
 interface FactoryTypeInterface
 {
-    public static function created(string $type, array $params = null): string;
+    /**
+     * @param string $type
+     * @param array|null $params
+     * @return string
+     */
+    public static function create(string $type, array $params = null): string;
 }

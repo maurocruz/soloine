@@ -9,22 +9,17 @@ interface ServerInterface
     /**
      * @param string $id
      */
-    public function selectThing(string $id);
+    public function selectById(string $id);
 
     /**
-     * @param bool $includeSubClass
+     * @param string $label
      */
-    public function includeSubClass(bool $includeSubClass = true);
+    public function selectByLabel(string $label);
 
     /**
      * @return bool
      */
     public function classExists(): bool;
-
-    /**
-     * @param string $format
-     */
-    public function format(string $format);
 
     /**
      * @return string

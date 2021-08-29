@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Plinct\Soloine;
 
-use Plinct\Soloine\Factory\TypeFactory;
+use Plinct\Soloine\Factory\SoloineFactory;
 use Slim\App as SlimApp;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface;
@@ -86,21 +86,25 @@ class Soloine
         $route->get('/soloine/[{type}]', function (Request $request, ResponseInterface $response, $args)
         {
             $params = $request->getQueryParams();
-            $type = $args['type'] ?? $params['class'] ?? null;
+            $source = $params['source'] ?? null;
+            $class = $params['class'] ?? null;
             $output = $params['output'] ?? null;
 
-            if ($type) {
-                $content = TypeFactory::created($type, $params);
+            if ($source == 'category') {
+                $content = SoloineFactory::category($params);
+            } elseif ($class) {
+                $content = SoloineFactory::schemaorg($params);
             } else {
                 $content = file_get_contents(__DIR__.'/../composer.json');
             }
 
             $contentType = $output == 'html' ? "text/html" : "application/json";
 
-            $newResponse = $response->withHeader('Content-Type', $contentType);
-            $newResponse->getBody()->write($content);
+            $response = $response->withHeader('Content-Type', $contentType);
+            $response = $response->withHeader('Access-Control-Allow-Origin', '*');
+            $response->getBody()->write($content);
 
-            return $newResponse;
+            return $response;
         });
     }
 }

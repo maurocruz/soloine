@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+:Route->Soloine.get():json;
+
+if (looking for) then (class)
+    :SoloineFactory::lookingForClass(params):string;
+    :Server::class(params);
+
+else (category)
+    :SoloineFactory::lookingForCategory(params);
+    :Server::category(params);
+
+endif
+
+if(response view) then (list)
+    :View::list(data);
+
+else (item)
+    :view::item(data):string;
+
+endif;
+
+stop
+
+@enduml

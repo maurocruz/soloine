@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Plinct\Soloine\Server;
 
+use Plinct\Soloine\Format\Format;
+
 abstract class ServerAbstract
 {
-    const SCHEMAORG_FILE = __DIR__.'/../../static/data/schemaorg.json';
     /**
      * @var array
      */
-    protected array $data;
+    protected static array $data;
+    /**
+     * @var array
+     */
+    protected array $params;
     /**
      * @var array
      */
@@ -28,6 +33,10 @@ abstract class ServerAbstract
      */
     protected ?string $id = null;
     /**
+     * @var string|null
+     */
+    protected ?string $label = null;
+    /**
      * @var array|null
      */
     protected ?array $subClass = null;
@@ -40,17 +49,6 @@ abstract class ServerAbstract
      */
     protected ?array $superClassOf = null;
 
-    /**
-     * @param string|null $apiUrl
-     */
-    protected function setData(string $apiUrl = null): void
-    {
-        $this->data = json_decode(file_get_contents($apiUrl ?? self::SCHEMAORG_FILE), true);
-
-        $this->setContext($this->data['@context']);
-
-        $this->setGraph($this->data['@graph']);
-    }
 
     /**
      * @param array $context
@@ -92,10 +90,9 @@ abstract class ServerAbstract
         $this->superClassOf[] = $subClassOf;
     }
 
-    protected function selectClass(string $id)
+    protected function selectClass($id)
     {
         $class = null;
-
         foreach ($this->graph as $value) {
             if (isset($value['@id']) && $value['@id'] == $id) {
                 $class = $value;
@@ -116,10 +113,10 @@ abstract class ServerAbstract
     {
         $subClass = null;
 
-        foreach ($this->data['@graph'] as $value) {
+        foreach (self::$data['@graph'] as $value) {
             $subClassOf = $value['rdfs:subClassOf'] ?? null;
 
-            if ($subClassOf) {
+            if ($subClassOf && isset($class['@id'])) {
                 if (isset($subClassOf['@id']) && $subClassOf['@id'] == $class['@id']) {
                    $subClass[] = $this->selectClass($value['@id']);
 
@@ -136,5 +133,24 @@ abstract class ServerAbstract
         }
 
         return $subClass;
+    }
+
+    /**
+     *
+     */
+    protected function format()
+    {
+        if ($this->superClass) {
+
+            $format = new Format($this->superClass);
+
+            $this->superClass = match ($this->params['format']) {
+                'hierarchyText' => $format->hierarchyText(),
+                'breadcrumb' => isset($this->params['subClass']) ? $format->breadcrumb($this->params['subClass']) : null
+            };
+
+        } else {
+            $this->superClass = [ "message" => "class '$this->id' not exists" ];
+        }
     }
 }

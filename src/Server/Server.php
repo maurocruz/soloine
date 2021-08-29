@@ -4,32 +4,60 @@ declare(strict_types=1);
 
 namespace Plinct\Soloine\Server;
 
-use Plinct\Soloine\Format\Format;
-
 class Server extends ServerAbstract implements ServerInterface
 {
     /**
-     * @param string|null $urlApi
+     * @param array|null $params
      */
-    public function __construct(string $urlApi = null)
+    public function __construct(array $params = null)
     {
-        $this->setData($urlApi);
+        $this->params = $params;
+    }
+
+    /**
+     * @param string|null $apiUrl
+     */
+    public function setData(string $apiUrl = null): void
+    {
+        self::$data = json_decode(file_get_contents($apiUrl), true);
+
+        self::$data['@context']["source"] = realpath($apiUrl);
+
+        $this->setContext(self::$data['@context']);
+
+        $this->setGraph(self::$data['@graph']);
+    }
+
+    public static function searchById(string $id): bool
+    {
+        foreach (self::$data['@graph'] as $item) {
+            if ($item['@id'] == $id) {
+                return $item;
+            }
+        }
+        return false;
+    }
+    public static function searchByLabel(string $label): bool
+    {
+        foreach (self::$data['@graph'] as $item) {
+            if ($item['rdfs:label'] == $label) {
+                return $item;
+            }
+        }
+        return false;
+    }
+
+    public function selectByLabel(string $label)
+    {
+        $this->label = $label;
     }
 
     /**
      * @param string $id
      */
-    public function selectThing(string $id)
+    public function selectById(string $id)
     {
-        $this->superClass = parent::selectClass($id);
-    }
-
-    /**
-     * @param bool $includeSubClass
-     */
-    public function includeSubClass(bool $includeSubClass = true)
-    {
-        $this->includeSubClass = $includeSubClass;
+        $this->id = $id;
     }
 
     /**
@@ -40,21 +68,27 @@ class Server extends ServerAbstract implements ServerInterface
         return (bool)$this->id;
     }
 
-    public function format(string $format)
-    {
-        if ($format == "hierarchyText") {
-            $this->superClass = (new Format())->hierarchyText($this->superClass);
-        }
-    }
 
     /**
      * @return string
      */
     public final function render(): string
     {
-        $this->data['@context'] = $this->context;
-        $this->data['@graph'] = $this->superClass;
+        if (isset($this->params['subClass'])) {
+            $this->includeSubClass = true;
+        }
 
-        return json_encode($this->data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $this->superClass = parent::selectClass($this->id);
+
+
+        // FORMAT
+        if (isset($this->params['format'])) {
+            parent::format();
+        }
+
+        $newData['@context'] = $this->context;
+        $newData['@graph'] = $this->superClass;
+
+        return json_encode($newData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }
