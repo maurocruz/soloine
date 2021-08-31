@@ -2,7 +2,9 @@
   "@context": {
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "schema": "https://plinct.com.br/soloine/"
+    "schema": "https://schema.org/",
+    "soloine": "https://plinct.com.br/soloine/",
+    "category": "https://plinct.com.br/soloine/category"
   },
   "@graph": [
     {
@@ -15,6 +17,33 @@
       },
       "schema:source": {
         "@id": "http://www.w3.org/wiki/WebSchemas/SchemaDotOrgSources#source_GoodRelationsTerms"
+      }
+    },
+    {
+      "@id": "category:CreativeWork",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "",
+      "rdfs:label": "CreativeWork",
+      "rdfs:subClassOf": {
+        "@id": "schema:Product"
+      }
+    },
+    {
+      "@id": "category:MediaObject",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "",
+      "rdfs:label": "MediaObject",
+      "rdfs:subClassOf": {
+        "@id": "category:CreativeWork"
+      }
+    },
+    {
+      "@id": "category:VideoObject",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "",
+      "rdfs:label": "VideoObject",
+      "rdfs:subClassOf": {
+        "@id": "category:MediaObject"
       }
     }
   ]
