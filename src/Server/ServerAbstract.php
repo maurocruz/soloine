@@ -93,8 +93,11 @@ abstract class ServerAbstract
     protected function selectClass($id)
     {
         $class = null;
+
         foreach ($this->graph as $value) {
             if (isset($value['@id']) && $value['@id'] == $id) {
+                $class = $value;
+            } elseif (isset($value['rdfs:label']) && $value['rdfs:label'] == $id) {
                 $class = $value;
             }
         }

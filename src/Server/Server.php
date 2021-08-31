@@ -78,7 +78,11 @@ class Server extends ServerAbstract implements ServerInterface
             $this->includeSubClass = true;
         }
 
-        $this->superClass = parent::selectClass($this->id);
+        if ($this->id) {
+            $this->superClass = parent::selectClass($this->id);
+        } elseif ($this->label) {
+            $this->superClass = parent::selectClass($this->label);
+        }
 
 
         // FORMAT
