@@ -1,7 +1,9 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Plinct\Soloine\Factory;
 
-use JetBrains\PhpStorm\Pure;
 use Plinct\Soloine\Server\Server;
 use Plinct\Soloine\Soloine;
 
@@ -10,7 +12,7 @@ class SoloineFactory
     /**
      * @return Soloine
      */
-    #[Pure] public static function created(): Soloine {
+    public static function created(): Soloine {
         return new Soloine();
     }
 
@@ -23,14 +25,14 @@ class SoloineFactory
         $class = $params['class'];
         $source = $params['source'];
 
-        $fileName = $class.ucfirst($source);
+        $fileName = lcfirst($class).ucfirst($source);
 
-        $sourceFile = __DIR__ . "/../../static/data/$fileName.json";
+        $sourceCategory = __DIR__ . "/../../static/data/$fileName.json";
 
-        if(file_exists($sourceFile)) {
+        if(file_exists($sourceCategory)) {
             $server = new Server($params);
-            $server->setData($sourceFile);
-            $server->selectById("schema:" . ucfirst($class));
+            $server->setData($sourceCategory);
+            $server->selectByLabel(ucfirst($class));
             return $server->render();
         }
 
