@@ -15,6 +15,33 @@
       }
     },
     {
+      "@id": "schema:MarketingService",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A marketing services",
+      "rdfs:label": "MarketingService",
+      "rdfs:subClassOf": {
+        "@id": "schema:Service"
+      }
+    },
+    {
+      "@id": "schema:WebMarketing",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A web marketing services",
+      "rdfs:label": "WebMarketing",
+      "rdfs:subClassOf": {
+        "@id": "schema:MarketingService"
+      }
+    },
+    {
+      "@id": "schema:WebAdvertisements",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A web advertisements",
+      "rdfs:label": "WebAdvertisements",
+      "rdfs:subClassOf": {
+        "@id": "schema:WebMarketing"
+      }
+    },
+    {
       "@id": "schema:TouristService",
       "@type": "rdfs:Class",
       "rdfs:comment": "A tourist service provided for organization or person, e.g. tour guide, travel guide, etc",
@@ -26,10 +53,46 @@
     {
       "@id": "schema:TourGuide",
       "@type": "rdfs:Class",
-      "rdfs:comment": "A service of the tour guide profissional",
+      "rdfs:comment": "A service of profissional tour guide ",
       "rdfs:label": "TourGuide",
       "rdfs:subClassOf": {
         "@id": "schema:TouristService"
+      }
+    },
+    {
+      "@id": "schema:WebService",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A web service",
+      "rdfs:label": "WebService",
+      "rdfs:subClassOf": {
+        "@id": "schema:Service"
+      }
+    },
+    {
+      "@id": "schema:WebHostingService",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A web hosting service",
+      "rdfs:label": "WebHostingService",
+      "rdfs:subClassOf": {
+        "@id": "schema:WebService"
+      }
+    },
+    {
+      "@id": "schema:WebPage",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A web page within a website",
+      "rdfs:label": "WebPage",
+      "rdfs:subClassOf": {
+        "@id": "schema:WebService"
+      }
+    },
+    {
+      "@id": "schema:WebSite",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "A web site",
+      "rdfs:label": "WebSite",
+      "rdfs:subClassOf": {
+        "@id": "schema:WebService"
       }
     }
   ]
