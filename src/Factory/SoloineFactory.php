@@ -25,9 +25,7 @@ class SoloineFactory
         $class = $params['class'];
         $source = $params['source'];
 
-        $fileName = lcfirst($class).ucfirst($source);
-
-        $sourceCategory = __DIR__ . "/../../static/data/$fileName.json";
+        $sourceCategory = __DIR__ . "/../../static/data/$source.json";
 
         if(file_exists($sourceCategory)) {
             $server = new Server($params);

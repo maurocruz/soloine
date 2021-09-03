@@ -90,7 +90,7 @@ class Soloine
             $class = $params['class'] ?? null;
             $output = $params['output'] ?? null;
 
-            if ($source == 'category') {
+            if ($source == 'serviceCategory') {
                 $content = SoloineFactory::category($params);
             } elseif ($class) {
                 $content = SoloineFactory::schemaorg($params);
