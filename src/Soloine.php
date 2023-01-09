@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Plinct\Soloine;
 
+use Plinct\Api\Middleware\CorsMiddleware;
 use Plinct\Soloine\Factory\SoloineFactory;
 use Slim\App as SlimApp;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Routing\RouteCollectorProxy as Route;
 
 class Soloine
 {
@@ -83,28 +85,35 @@ class Soloine
    */
   public function routes(SlimApp $route): void
   {
-    $route->get('/soloine/[{type}]', function (Request $request, ResponseInterface $response, $args)
-    {
-      $params = $request->getQueryParams();
-      $source = $params['source'] ?? null;
-      $class = $params['class'] ?? null;
-      $output = $params['output'] ?? null;
+		$route->group('/soloine', function (Route $route)
+		{
+			$route->options('/{class}', function (Request $request, ResponseInterface $response) {
+				return $response;
+			});
 
-      if ($source == 'serviceCategory') {
-        $content = SoloineFactory::category($params);
-      } elseif ($class) {
-        $content = SoloineFactory::schemaorg($params);
-      } else {
-        $content = file_get_contents(__DIR__.'/../composer.json');
-      }
+			$route->get('/[{class}]', function (Request $request, ResponseInterface $response, $args) {
+				$params = $request->getQueryParams();
+				$source = $params['source'] ?? null;
+				$class = $args['class'] ?? null;
 
-      $contentType = $output == 'html' ? "text/html" : "application/json";
+				if ($source == 'serviceCategory') {
+					$content = SoloineFactory::category($class, $params);
+				} elseif ($class) {
+					$content = SoloineFactory::schemaorg($class, $params);
+				} else {
+					$content = file_get_contents(__DIR__ . '/../composer.json');
+				}
 
-      $response = $response->withHeader('Content-Type', $contentType);
-      $response = $response->withHeader('Access-Control-Allow-Origin', '*');
-      $response->getBody()->write($content);
+				$response->getBody()->write($content);
 
-      return $response;
-    });
+				return $response;
+			});
+
+		})->addMiddleware(new CorsMiddleware([
+			"Content-type" => "application/json",
+			"Access-Control-Allow-Origin" => '*',
+			"Access-Control-Allow-Headers" => "origin, x-requested-with, content-type, x-ijt, authorization",
+	    "Access-Control-Allow-Methods" => "PUT, GET, POST, DELETE, OPTIONS"
+		]));
   }
 }

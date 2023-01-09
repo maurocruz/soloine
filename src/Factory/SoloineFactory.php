@@ -16,13 +16,13 @@ class SoloineFactory
     return new Soloine();
   }
 
-  /**
-   * @param $params
-   * @return string
-   */
-  public static function category($params): string
+	/**
+	 * @param string $class
+	 * @param array $params
+	 * @return string
+	 */
+  public static function category(string $class, array $params): string
   {
-    $class = $params['class'];
     $source = $params['source'];
 
     $sourceCategory = __DIR__ . "/../../static/data/$source.json";
@@ -37,13 +37,13 @@ class SoloineFactory
     return json_encode(['message'=>'Class not found!']);
   }
 
-  /**
-   * @param array|null $params
-   * @return string
-   */
-  public static function schemaorg(array $params = null): string
+	/**
+	 * @param string $class
+	 * @param array|null $params
+	 * @return string
+	 */
+  public static function schemaorg(string $class, array $params = null): string
   {
-    $class = $params['class'];
     $sourceFile = __DIR__."/../../static/data/schemaorg.json";
 
     $server = new Server($params);
